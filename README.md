@@ -62,10 +62,10 @@ Copy code
 ![demo2](examples/demo2.jpg)
 
 ### 3. 后端收到上传请求  
-![demo3](examples/demo3.jpg)
+![demo3](examples/demo3.png)
 
 ### 4. 使用十六进制编辑器查看 COM 段中的隐写内容  
-![demo4](examples/demo4.jpg)
+![demo4](examples/demo4.png)
 
 
 ---
