@@ -1,4 +1,3 @@
-# stego_img
 # JPEG COM 段隐写与解析 Demo（FastAPI + HTML 前端）
 
 这是我的网络安全课程小项目，内容是利用 **JPEG 的 COM 段** 实现简单的隐写与解析。  
@@ -56,21 +55,18 @@ Copy code
 
 ## 🖼️ Demo 截图展示
 
-> 你上传到 GitHub 后，把下面图片路径换成 `./images/xxx.jpg` 或项目中的实际路径即可。
-
 ### 1. 前端：选择原图并输入隐藏文本  
-![demo1](images/demo1.jpg)
+![demo1](examples/demo1.jpg)
 
 ### 2. 解析后的弹窗提示  
-![demo2](images/demo2.jpg)
+![demo2](examples/demo2.jpg)
 
 ### 3. 后端收到上传请求  
-![demo3](images/demo3.jpg)
+![demo3](examples/demo3.jpg)
 
 ### 4. 使用十六进制编辑器查看 COM 段中的隐写内容  
-![demo4](images/demo4.jpg)
+![demo4](examples/demo4.jpg)
 
-（以上四张截图是你提供的真实运行效果）
 
 ---
 
