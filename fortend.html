@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>接收图片推送</h2>
+<div id="imgs"></div>
+
+<script>
+    const ws = new WebSocket("ws://e76893b6.natappfree.cc/ws");
+
+    ws.onmessage = (event) => {
+        const url = event.data;
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.width = "300px";
+        img.style.margin = "10px";
+        document.getElementById("imgs").appendChild(img);
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>隐写插入并上传</title>
+  <style>
+    body { font-family: Arial; padding: 30px; }
+    .preview { width: 250px; margin: 10px 0; border: 1px solid #ccc; }
+    .box { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>万束屋:JPEG 隐写 COM 段插入并上传</h2>
+
+  <!-- 原图选择 -->
+  <div class="box">
+    <p>原图：</p>
+    <input type="file" id="oriFile" accept="image/jpeg">
+    <br>
+    <img id="oriPreview" class="preview" style="display:none;">
+  </div>
+
+  <!-- 隐文输入框 -->
+  <div class="box">
+    <p>输入要写入 JPEG COM 段的隐文：</p>
+    <textarea id="hiddenText" rows="3" cols="40" placeholder="请输入隐藏内容"></textarea>
+  </div>
+
+  <!-- 隐写后图像预览 -->
+  <div class="box">
+    <p>生成的隐写图：</p>
+    <img id="stegoPreview" class="preview" style="display:none;">
+  </div>
+
+  <button onclick="generateStego()">生成隐写图</button>
+  <button onclick="uploadPair()">上传图片对</button>
+
+
+  <script>
+    const oriInput = document.getElementById("oriFile");
+
+    oriInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        document.getElementById("oriPreview").src = url;
+        document.getElementById("oriPreview").style.display = "block";
+      }
+    });
+
+    function readAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    let stego_base64_global = null;
+    let ori_base64_global = null;
+
+    // 生成隐写图（调用后端）
+    async function generateStego() {
+      const oriFile = oriInput.files[0];
+      const hiddenText = document.getElementById("hiddenText").value;
+
+      if (!oriFile) {
+        alert("请选择原图！");
+        return;
+      }
+      if (!hiddenText.trim()) {
+        alert("请输入隐文！");
+        return;
+      }
+
+      ori_base64_global = await readAsBase64(oriFile);
+
+      const payload = {
+        original_base64: ori_base64_global,
+        hidden_text: hiddenText
+      };
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/generate_stego/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        stego_base64_global = data.stego_base64;
+
+        document.getElementById("stegoPreview").src = "data:image/jpeg;base64," + stego_base64_global;
+        document.getElementById("stegoPreview").style.display = "block";
+
+        alert("隐写图生成成功！");
+
+      } catch (err) {
+        console.error(err);
+        alert("隐写图生成失败！");
+      }
+    }
+
+    // 上传图片对
+    async function uploadPair() {
+      if (!ori_base64_global || !stego_base64_global) {
+        alert("请先生成隐写图！");
+        return;
+      }
+
+      const payload = {
+        original_base64: ori_base64_global,
+        stego_base64: stego_base64_global
+      };
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/upload_pair/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        alert("上传成功！后台解析到的隐文为：\n" + data.hidden_text);
+
+      } catch (err) {
+        console.error(err);
+        alert("上传失败！");
+      }
+    }
+  </script>
+
+</body>
+</html>
+
